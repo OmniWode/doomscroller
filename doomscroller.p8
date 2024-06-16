@@ -3,7 +3,58 @@ version 42
 __lua__
 --doomscroller.p8
 
+-------------------------------
+-- core functions -------------
+-------------------------------
+
 function _init()
+	--launch title screen
+	init_title()	
+end
+
+function _update()
+	--game state
+	--0=title; 1=game
+
+	if (state==0) update_title()
+	if (state==1) update_game()
+end
+
+function _draw()
+	--game state
+	--0=title; 1=game
+
+	if (state==0) draw_title()
+	if (state==1) draw_game()
+end
+
+-------------------------------
+--title functions -------------
+-------------------------------
+function init_title()
+	state=0
+	cls(0)    
+end
+
+function update_title()
+	if (btnp(5)) then
+		state=1
+		init_game()
+	end
+end
+
+function draw_title()
+	print("doomscroller",38,32,6)
+	print("press ❎ to play",30, 48, 6)
+end
+
+-------------------------------
+--game functions --------------
+-------------------------------
+
+function init_game()
+	state=1 --gameplay
+
 	map_setup()
 	make_player()
 
@@ -11,7 +62,7 @@ function _init()
 	game_over=false
 end
 
-function _update()
+function update_game()
 	if (not game_over) then
 		--update_map()
 		move_player()
@@ -19,11 +70,9 @@ function _update()
 	else
 		if (btnp(5)) extcmd("reset")
 	end
-
 end
 
-function _draw()
-
+function draw_game()
 	cls()
 	if (not game_over) then
 		draw_map()
@@ -35,7 +84,6 @@ function _draw()
 	--testing ascii art
 	--print(player.ch, player.x, player.y, player.color)
 	--print("x",  67, 67, 8)
-
 end
 
 -->8
@@ -149,3 +197,5 @@ __map__
 0200000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0200000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0202020202020202030202020202020200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+__sfx__
+000100001a07000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
