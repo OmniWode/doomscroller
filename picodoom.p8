@@ -163,7 +163,7 @@ function interact(x,y)
 	--add code for interactive items
 	if (is_tile(heal,x,y)) then
 		p.hp+=3
-		mset(x,y,4)
+		mset(x,y,0)
 		sfx(0)
 	end
 
