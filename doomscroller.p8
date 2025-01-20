@@ -98,7 +98,7 @@ function map_setup()
 	--room=1
 	room={}
 	room.stairx=4
-	room.stairy=13
+	room.stairy=4
 
 	--flags	
 	solid=0
@@ -123,40 +123,24 @@ function draw_map()
 	if (level==0) then
 		mapx=0
 		mapy=0
+		mset(mapx+room.stairx,mapy+room.stairy,18)
 		cls(11)
 	else
 		mapx=16
 		mapy=0
-		clear_room(mapx,mapy)
+		--clear_room(mapx,mapy)
 		if (level%2==0) then
 			cls(2)
 		else
 			cls(0)
 		end
+
+		clear_room(mapx,mapy)
+		mset(mapx+room.stairx,mapy+room.stairy,18)
+		mset(mapx+room.enemyx,mapy+room.enemyy,3)
 	end
 
-	draw_room(mapx,mapy)
 	map(mapx,mapy,0,0,16,16)
-
-	--print("mapx= "..mapx,0,0,9)
-	--print("mapy= "..mapy,36,0,9)
-
-end
-
-function draw_room(mapx,mapy)
-	--draw stairs to next level
-	--spr(18,room.stairx*8,room.stairy*8)
-
-	mset(mapx+room.stairx,mapy+room.stairy,18)
-
-end
-
-function clear_room(mapx,mapy)
-	for i=1,14 do
-		for j=1,14 do
-			mset(mapx+i,mapy+j,0)
-		end
-	end
 
 end
 
@@ -174,16 +158,44 @@ function new_level()
 	level+=1
 	sfx(0)
 
-	p.x=18
-	p.y=2
+	p.x=22
+	p.y=6
+	p.hp+=1
 
-	--room.stairx=28
-	--room.stairy=12
+	make_room()
+end
+
+function make_room()
+
+	--clear previous room
+	
+	--clear_room(mapx,mapy)
+
+	--make stairs to next level
+	
 	room.stairx=6+flr(rnd(6))
 	room.stairy=6+flr(rnd(6))
+	--mset(mapx+room.stairx,mapy+room.stairy,18)
 
-	--p.x=mid(0,2,127)
-	--p.y=mid(0,2,127)
+
+	--prototype for enemies, etc
+	--replace with actors table later
+	room.enemyx=6+flr(rnd(6))
+	room.enemyy=6+flr(rnd(6))
+	if (room.stairx==room.enemyx) room.enemyx-=3
+	if (room.stairy==room.enemyy) room.enemyy-=3
+	--mset(mapx+room.enemyx,mapy+room.enemyy,3)
+
+
+end
+
+function clear_room(mapx,mapy)
+	for i=1,14 do
+		for j=1,14 do
+			mset(mapx+i,mapy+j,0)
+		end
+	end
+
 end
 
 -->8
@@ -221,13 +233,16 @@ function move_player()
 	end
 
 
-	interact(newx, newy)
+	--interact(newx, newy)
 	
 	if (can_move(newx,newy)) then
-		p.x=mid(0,newx,127)
-		p.y=mid(0,newy,127)
+		--p.x=mid(0,newx,127)
+		--p.y=mid(0,newy,127)
+		p.x=newx
+		p.y=newy
 	else
 		--sfx(0)
+		interact(newx, newy)
 	end
 end
 
@@ -250,6 +265,7 @@ function interact(x,y)
 	--use stairs
 	if (is_tile(stair,x,y)) then
 		new_level()
+		--p.hp+=1
 	end
 
 	--win game
@@ -269,6 +285,13 @@ function draw_hud()
 
 	spr(48,hudx+2,hudy)
 	print(p.hp,hudx+10,hudy+2,10)
+
+
+	rect(hudx+70,hudy,hudx+100,hudy+8,10)
+	print("mapx="..tostr(mapx),hudx+72,hudy+2,10)
+	rect(hudx+100,hudy,hudx+127,hudy+8,10)
+	print("mapy="..tostr(mapy),hudx+102,hudy+2,10)
+
 end
 
 function draw_debug()
@@ -295,6 +318,15 @@ function draw_debug()
 	rect(debugx+44,debugy,debugx+70,debugy+8,10)
 	print("lvl="..tostr(level),debugx+46,debugy+2,11)
 
+	--rect(debugx+70,debugy,debugx+100,debugy+8,10)
+	--print("mapx="..tostr(mapx),debugx+72,debugy+2,10)
+	--rect(debugx+100,debugy,debugx+127,debugy+8,10)
+	--print("mapy="..tostr(mapy),debugx+102,debugy+2,10)
+
+	rect(debugx+70,debugy,debugx+100,debugy+8,10)
+	print("strx="..tostr(room.stairx),debugx+72,debugy+2,10)
+	rect(debugx+100,debugy,debugx+127,debugy+8,10)
+	print("stry="..tostr(room.stairy),debugx+102,debugy+2,10)
 end
 
 -->8
