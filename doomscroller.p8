@@ -99,6 +99,8 @@ function map_setup()
 	room={}
 	room.stairx=4
 	room.stairy=4
+	room.num_enem=3
+	room.actors={}
 
 	--flags	
 	solid=0
@@ -126,8 +128,7 @@ function draw_map()
 		mset(mapx+room.stairx,mapy+room.stairy,18)
 		cls(11)
 	else
-		mapx=16
-		mapy=0
+
 		--clear_room(mapx,mapy)
 		if (level%2==0) then
 			cls(2)
@@ -135,14 +136,18 @@ function draw_map()
 			cls(0)
 		end
 
-		clear_room(mapx,mapy)
-		mset(mapx+room.stairx,mapy+room.stairy,18)
-		mset(mapx+room.enemyx,mapy+room.enemyy,3)
+		clear_room(mapx,mapy) --is this being called too often
+		set_room(mapx,mapy)
+		--mset(mapx+room.stairx,mapy+room.stairy,18)
+		--mset(mapx+room.enemyx,mapy+room.enemyy,3)
+
 	end
+
 
 	map(mapx,mapy,0,0,16,16)
 
 end
+
 
 function is_tile(tile_type,x,y)
 	tile=mget(x,y)
@@ -150,20 +155,26 @@ function is_tile(tile_type,x,y)
 	return has_flag
 end
 
+
 function can_move(x,y)
 	return not is_tile(solid,x,y)
 end
+
 
 function new_level()
 	level+=1
 	sfx(0)
 
-	p.x=22
-	p.y=6
-	p.hp+=1
+	mapx=16
+	mapy=0
+
+	p.x=18
+	p.y=2
+	--p.hp+=1
 
 	make_room()
 end
+
 
 function make_room()
 
@@ -172,7 +183,6 @@ function make_room()
 	--clear_room(mapx,mapy)
 
 	--make stairs to next level
-	
 	room.stairx=6+flr(rnd(6))
 	room.stairy=6+flr(rnd(6))
 	--mset(mapx+room.stairx,mapy+room.stairy,18)
@@ -180,14 +190,33 @@ function make_room()
 
 	--prototype for enemies, etc
 	--replace with actors table later
-	room.enemyx=6+flr(rnd(6))
-	room.enemyy=6+flr(rnd(6))
-	if (room.stairx==room.enemyx) room.enemyx-=3
-	if (room.stairy==room.enemyy) room.enemyy-=3
-	--mset(mapx+room.enemyx,mapy+room.enemyy,3)
+	--room.enemyx=6+flr(rnd(6))
+	--room.enemyy=6+flr(rnd(6))
+	--if (room.stairx==room.enemyx) room.enemyx-=3
+	--if (room.stairy==room.enemyy) room.enemyy-=3
 
+	room.actors={}
+
+	for i=1,room.num_enem do
+		local e=make_enemy()
+		add(room.actors,e)
+	end
+	--stop(room.num_enem)
 
 end
+
+
+function set_room(mapx,mapy)
+	mset(mapx+room.stairx,mapy+room.stairy,18)
+	--mset(mapx+room.enemyx,mapy+room.enemyy,3)
+
+	for a in all(room.actors) do
+		mset(a.x,a.y,a.spr)
+		--stop(a.x)
+	end
+
+end
+
 
 function clear_room(mapx,mapy)
 	for i=1,14 do
@@ -197,6 +226,17 @@ function clear_room(mapx,mapy)
 	end
 
 end
+
+function make_enemy()
+	local e={}
+	e.x=(4+flr(rnd(8)))+mapx
+	e.y=(4+flr(rnd(8)))+mapy
+	e.spr=3
+	e.hp=3
+
+	return e
+end
+
 
 -->8
 --player code
@@ -225,13 +265,6 @@ function move_player()
 	if (btnp(1)) newx+=1
 	if (btnp(2)) newy-=1
 	if (btnp(3)) newy+=1
-	
-	if (btnp(4)) then
-		newx = 2
-		newy = 2
-		new_level()
-	end
-
 
 	--interact(newx, newy)
 	
@@ -287,10 +320,13 @@ function draw_hud()
 	print(p.hp,hudx+10,hudy+2,10)
 
 
-	rect(hudx+70,hudy,hudx+100,hudy+8,10)
-	print("mapx="..tostr(mapx),hudx+72,hudy+2,10)
+	--rect(hudx+70,hudy,hudx+100,hudy+8,10)
+	--print("mapx="..tostr(mapx),hudx+72,hudy+2,10)
+	--rect(hudx+100,hudy,hudx+127,hudy+8,10)
+	--print("mapy="..tostr(mapy),hudx+102,hudy+2,10)
+
 	rect(hudx+100,hudy,hudx+127,hudy+8,10)
-	print("mapy="..tostr(mapy),hudx+102,hudy+2,10)
+	print("#act="..tostr(#room.actors),hudx+102,hudy+2,10)
 
 end
 
