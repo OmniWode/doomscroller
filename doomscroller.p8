@@ -95,7 +95,6 @@ function map_setup()
 	anim_time=30 --30 = 1 sec
 
 	level=0
-	--room=1
 	room={}
 	room.stairx=4
 	room.stairy=4
@@ -104,7 +103,6 @@ function map_setup()
 
 	--flags	
 	solid=0
-	--door=1
 	stair=1
 	enemy=2
 	heal=3
@@ -116,20 +114,12 @@ function update_map()
 end
 
 function draw_map()
-	--mapx=flr(p.x/16)*16
-	--mapy=flr(p.y/16)*16
-	
-	--mapx=16*level
-	--mapy=16*level
-
 	if (level==0) then
 		mapx=0
 		mapy=0
 		mset(mapx+room.stairx,mapy+room.stairy,18)
 		cls(11)
 	else
-
-		--clear_room(mapx,mapy)
 		if (level%2==0) then
 			cls(2)
 		else
@@ -138,8 +128,6 @@ function draw_map()
 
 		clear_room(mapx,mapy) --is this being called too often
 		set_room(mapx,mapy)
-		--mset(mapx+room.stairx,mapy+room.stairy,18)
-		--mset(mapx+room.enemyx,mapy+room.enemyy,3)
 
 	end
 
@@ -170,30 +158,14 @@ function new_level()
 
 	p.x=18
 	p.y=2
-	--p.hp+=1
 
 	make_room()
 end
 
 
 function make_room()
-
-	--clear previous room
-	
-	--clear_room(mapx,mapy)
-
-	--make stairs to next level
 	room.stairx=6+flr(rnd(6))
 	room.stairy=6+flr(rnd(6))
-	--mset(mapx+room.stairx,mapy+room.stairy,18)
-
-
-	--prototype for enemies, etc
-	--replace with actors table later
-	--room.enemyx=6+flr(rnd(6))
-	--room.enemyy=6+flr(rnd(6))
-	--if (room.stairx==room.enemyx) room.enemyx-=3
-	--if (room.stairy==room.enemyy) room.enemyy-=3
 
 	room.actors={}
 
@@ -201,18 +173,15 @@ function make_room()
 		local e=make_enemy()
 		add(room.actors,e)
 	end
-	--stop(room.num_enem)
 
 end
 
 
 function set_room(mapx,mapy)
 	mset(mapx+room.stairx,mapy+room.stairy,18)
-	--mset(mapx+room.enemyx,mapy+room.enemyy,3)
 
 	for a in all(room.actors) do
 		mset(a.x,a.y,a.spr)
-		--stop(a.x)
 	end
 
 end
@@ -230,7 +199,11 @@ end
 function make_enemy()
 	local e={}
 	e.x=(4+flr(rnd(8)))+mapx
+	if (e.x==room.stairx) e.x-=2
+
 	e.y=(4+flr(rnd(8)))+mapy
+	if (e.y==room.stairy) e.y-=2
+
 	e.spr=3
 	e.hp=3
 
@@ -269,12 +242,9 @@ function move_player()
 	--interact(newx, newy)
 	
 	if (can_move(newx,newy)) then
-		--p.x=mid(0,newx,127)
-		--p.y=mid(0,newy,127)
 		p.x=newx
 		p.y=newy
 	else
-		--sfx(0)
 		interact(newx, newy)
 	end
 end
@@ -309,8 +279,6 @@ function interact(x,y)
 end
 
 function draw_hud()
-	--hudx=mapx*8
-	--hudy=mapy*8+119
 	hudx=0
 	hudy=119
 
