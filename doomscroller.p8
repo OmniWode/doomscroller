@@ -19,6 +19,7 @@ function _update()
 
 	if (state==0) update_title()
 	if (state==1) update_game()
+
 end
 
 function _draw()
@@ -67,7 +68,13 @@ end
 function update_game()
 	if (not game_over) then
 		update_map()
-		move_player()
+
+		if (p.turn) then
+			player_turn()
+		else
+			world_turn()
+		end
+
 		check_win_lose()
 	else
 		if (btnp(5)) extcmd("reset")
@@ -115,6 +122,13 @@ end
 function update_map()
 
 end
+
+
+function world_turn()
+	--add(log,"a haunting silence",1)
+	p.turn=true
+end
+
 
 function draw_map()
 	if (level==0) then
@@ -265,6 +279,7 @@ end
 
 function make_player()
 	p={}
+	p.turn=true
 	p.x=2
 	p.y=2
 	p.w=8
@@ -279,20 +294,37 @@ function draw_player()
 	spr(p.spr,(p.x%16)*p.w,(p.y%16)*p.h)
 end
 
-function move_player()
+function player_turn()
+	--stop("halt")
 	newx=p.x
 	newy=p.y
 
-	if (btnp(0)) newx-=1
-	if (btnp(1)) newx+=1
-	if (btnp(2)) newy-=1
-	if (btnp(3)) newy+=1
+	if (btnp(0)) then
+		newx-=1
+		p.turn=false
+	elseif (btnp(1)) then 
+		newx+=1
+		p.turn=false
+	elseif (btnp(2)) then
+		newy-=1
+		p.turn=false
+	elseif (btnp(3)) then
+		newy+=1
+		p.turn=false
+	elseif (btnp(4)) then
+		add(log,"you used 🅾️",1)
+		p.turn=false
+	elseif (btnp(5)) then
+		add(log,"you used ❎",1)
+		p.turn=false
+	end
 
 	--interact(newx, newy)
 	
 	if (can_move(newx,newy)) then
 		p.x=newx
 		p.y=newy
+
 	else
 		interact(newx, newy)
 	end
