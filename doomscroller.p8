@@ -95,6 +95,8 @@ function map_setup()
 	timer=0
 	anim_time=30 --30 = 1 sec
 
+	log={"are those stairs?"}
+
 	level=0
 	room={}
 	room.stairx=4
@@ -153,6 +155,8 @@ end
 function new_level()
 	level+=1
 	sfx(0)
+
+	add(log,"you enter level "..tostr(level),1)
 
 	--mapx=16
 	--mapy=0
@@ -355,6 +359,17 @@ function draw_log()
 	-- draw frame
 	rectfill(logx,logy,logx+87,logy+31,0)
 	rect(logx,logy,logx+87,logy+31,10)
+
+	-- write messages (20 X 4 chars)
+	--print(">####################",logx+3,logy+3,10)
+	--print("####################",logx+7,logy+10,10)
+	--print("####################",logx+7,logy+17,10)
+	--print("####################",logx+7,logy+24,10)
+	print(">",logx+3,logy+3,10)
+	print(tostr(log[1]),logx+7,logy+3,6)
+	if (#log>1) print(log[2],logx+7,logy+10,5)
+	if (#log>2) print(log[3],logx+7,logy+17,5)
+	if (#log>3) print(log[4],logx+7,logy+24,5)
 end
 
 function old_draw_hud()
